@@ -2,39 +2,53 @@
 
 ### Server Setup
 
-`cd vc-funding`
-
 Create a virtual environment to isolate our package dependencies locally
-`python3 -m venv env`
-`source env/bin/activate`  (On Windows use `env\Scripts\activate`)
+```
+$ cd vc-funding
+$ python3 -m venv env
+$ source env/bin/activate  (On Windows use `env\Scripts\activate`)
+```
 
 Install Django and Django REST framework into the virtual environment
-`pip install django`
-`pip install djangorestframework`
+```
+$ pip install django
+$ pip install djangorestframework
+```
 
 Run the server: 
-`python3 manage.py runserver`
+```
+$ python3 manage.py runserver
+```
 
-Create the migrations: 
-`python3 manage.py makemigrations`
-Apply the migrations: 
-`python3 manage.py migrate`
+Create and apply the migrations: 
+```
+$ python3 manage.py makemigrations
+$ python3 manage.py migrate
+```
 
 Create a superuser to access the db:
-`python3 manage.py createsuperuser`
+```
+$ python3 manage.py createsuperuser
+```
 
-Database is available at the URL: 127.0.0.1:8000/admin
+Database is available at the URL: `127.0.0.1:8000/admin`
 * unless another port is used; port 8000 is used by default
+
 
 ### Data Ingestion
 Run `ingest.py` script to ingest data from `people.csv` and `companies.csv` files into the SQL database.
-`python3 ingest.py`
+
+```
+$ python3 ingest.py
+```
+
 
 ### API Endpoints
 
 * `/api/avg-funding-by-person/<person_id>`
 * `/api/companies-by-person/<person_id>`
 * `investors-by-company/<company_linkedin_name>`
+
 
 ### SQL queries
 Q1:
