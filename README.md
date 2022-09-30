@@ -47,7 +47,7 @@ $ python3 ingest.py
 
 * `/api/avg-funding-by-person/<person_id>`
 * `/api/companies-by-person/<person_id>`
-* `investors-by-company/<company_linkedin_name>`
+* `/api/investors-by-company/<company_linkedin_name>`
 
 
 ### SQL queries
@@ -99,14 +99,13 @@ WHERE c.id IN (SELECT e.company_id FROM employment e WHERE lower(e.last_title) L
 ORDER BY c.headcount DESC
 LIMIT 3
 ```
-<<<<<<< HEAD
 Output:
 ```
 [('Dafiti', 2907, 'bb0d848943604a94bd3dc079f75afc96'), ('eBay for Business', 1336, 'a292842c475e4b4f9671fb09536c472e'), ('UWorld', 439, 'c6f69f63c7d5419faf34d0cccf544e18')]
 ```
 
 Q5:
-What is the average duration in years of employment across everyone’s 2nd most recent job?
+Average duration in years of employment
 ```
 SELECT ROUND(AVG(duration), 2) 
 FROM (
@@ -122,7 +121,7 @@ FROM (
 ```
 Output: `[(2.51,)]`
 
-How many people have had more than one job?
+Number of employees who had more than one job
 ```
 SELECT COUNT(*) 
 FROM (
@@ -134,6 +133,3 @@ FROM (
 ```
 Output: `[(904,)]`
 
-
-=======
->>>>>>> d838015cfeb0069fd1b30e46081de7f7324697ea
