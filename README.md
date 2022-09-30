@@ -39,17 +39,18 @@ Run `ingest.py` script to ingest data from `people.csv` and `companies.csv` file
 ### SQL queries
 Q1:
 ```
-SELECT AVG(known_total_funding) 
+SELECT AVG(company.known_total_funding) 
 FROM company 
 INNER JOIN employment ON company.id = employment.company_id 
-WHERE employment.person_id = '9e941331a62543f0a665c202d86d9ae5' AND company.known_total_funding IS NOT NULL
+WHERE employment.person_id = "92a528778d5d41a6950f1b9c6574be7a" AND company.known_total_funding IS NOT NULL
 ```
+Output: `[(108000000.0,)]`
 
 Q2:
 ```
-SELECT COUNT(id)
-FROM company
-WHERE id NOT IN (SELECT c.id FROM company c INNER JOIN employment e ON c.id = e.company_id)
+SELECT COUNT(c.id)
+FROM company c
+WHERE c.id NOT IN (SELECT c.id FROM company c INNER JOIN employment e ON c.id = e.company_id)
 ```
 alternatively,
 ```
@@ -58,15 +59,21 @@ FROM company
 LEFT JOIN employment ON company.id = employment.company_id
 WHERE employment.id IS NULL
 ```
+Output: `[(9421,)]`
+
 
 Q3:
 ```
-SELECT name, COUNT(employment.id) popularity
+SELECT company.name
 FROM company
 INNER JOIN employment ON company.id = employment.company_id 
-GROUP_BY name
-ORDER_BY popularity DESC
+GROUP BY company.name
+ORDER BY COUNT(employment.id) DESC
 LIMIT 10
+```
+Output:
+```
+[('Microsoft',), ('Amazon',), ('Intel Corporation',), ('Google',), ('Apple',), ('Hewlett Packard Enterprise',), ('Facebook',), ('Texas Instruments',), ('Hewlett-Packard',), ('Meta',)]
 ```
 
 Q4:
@@ -74,7 +81,42 @@ Q4:
 SELECT c.name, c.headcount, e.person_id
 FROM company c
 INNER JOIN employment e ON c.id = e.company_id
-WHERE e.person_id IN (SELECT person_id FROM employment WHERE lower(last_title) LIKE '%founder%')
-ORDER_BY c.headcount DESC
+WHERE c.id IN (SELECT e.company_id FROM employment e WHERE lower(e.last_title) LIKE '%founder%')
+ORDER BY c.headcount DESC
 LIMIT 3
 ```
+Output:
+```
+[('Dafiti', 2907, 'bb0d848943604a94bd3dc079f75afc96'), ('eBay for Business', 1336, 'a292842c475e4b4f9671fb09536c472e'), ('UWorld', 439, 'c6f69f63c7d5419faf34d0cccf544e18')]
+```
+
+Q5:
+What is the average duration in years of employment across everyone’s 2nd most recent job?
+```
+SELECT ROUND(AVG(duration), 2) 
+FROM (
+    SELECT e.person_id, (JULIANDAY(e.group_end_date) - JULIANDAY(e.group_start_date)) / 365) as duration 
+    FROM  employment e 
+    WHERE e.person_id IN (
+        SELECT e.person_id
+        FROM employment e
+        GROUP BY e.person_id
+        HAVING COUNT(e.id) > 1
+    )
+)
+```
+Output: `[(2.51,)]`
+
+How many people have had more than one job?
+```
+SELECT COUNT(*) 
+FROM (
+    SELECT e.person_id
+    FROM employment e 
+    GROUP BY e.person_id 
+    HAVING COUNT(e.id) > 1
+)
+```
+Output: `[(904,)]`
+
+
